@@ -1,0 +1,366 @@
+/* Seluruh teks, paragraf, dan heading memakai warna hitam. */
+:root {
+    --ink: #000000;
+    --page: #f4f4f5;
+    --surface: #ffffff;
+    --line: #d4d4d8;
+    --line-strong: #a1a1aa;
+    --ok: #d1fae5;
+    --warn: #fef3c7;
+    --danger: #fee2e2;
+    --info: #e0e7ff;
+    --muted-surface: #fafafa;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--page);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+li,
+td,
+th,
+label,
+legend,
+small,
+strong,
+a {
+    color: var(--ink);
+}
+
+a {
+    text-decoration: underline;
+}
+
+.topbar {
+    background-color: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 24px;
+}
+
+.topbar-inner {
+    max-width: 1480px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.topbar h1 {
+    font-size: 18px;
+    margin: 0;
+    letter-spacing: 0.2px;
+}
+
+.topbar p {
+    margin: 2px 0 0;
+    font-size: 12px;
+}
+
+.shell {
+    max-width: 1480px;
+    margin: 24px auto 64px;
+    padding: 0 24px;
+}
+
+.panel {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panel h2 {
+    font-size: 15px;
+    margin: 0 0 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+.panel .panel-hint {
+    margin: 0 0 16px;
+    font-size: 12px;
+}
+
+.alert {
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.alert-success {
+    background-color: var(--ok);
+}
+
+.alert-error {
+    background-color: var(--danger);
+}
+
+.alert-warning {
+    background-color: var(--warn);
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px;
+}
+
+.stat-card h3 {
+    margin: 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    font-weight: 600;
+}
+
+.stat-card .value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 6px;
+}
+
+.stat-card .note {
+    font-size: 11px;
+    margin-top: 2px;
+}
+
+.stat-card.flag {
+    background-color: var(--warn);
+}
+
+.table-scroll {
+    overflow-x: auto;
+    margin-bottom: 16px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th,
+td {
+    border-bottom: 1px solid var(--line);
+    padding: 9px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background-color: var(--muted-surface);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.numeric {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid var(--line-strong);
+}
+
+.badge-active {
+    background-color: var(--ok);
+}
+
+.badge-pending {
+    background-color: var(--warn);
+}
+
+.badge-completed {
+    background-color: var(--info);
+}
+
+.badge-cancelled {
+    background-color: var(--muted-surface);
+}
+
+.badge-inactive {
+    background-color: var(--danger);
+}
+
+.grid-two {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 20px;
+}
+
+form .field {
+    margin-bottom: 12px;
+}
+
+form label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    background-color: var(--surface);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.field-hint {
+    font-size: 11px;
+    margin-top: 4px;
+    display: block;
+}
+
+button {
+    background-color: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    border-radius: 4px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--muted-surface);
+}
+
+button.primary {
+    background-color: var(--ink);
+    color: #ffffff;
+}
+
+button.primary:hover {
+    background-color: #262626;
+}
+
+button.small {
+    padding: 4px 9px;
+    font-size: 11px;
+}
+
+.inline-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.inline-form input[type="number"] {
+    width: 88px;
+    padding: 4px 6px;
+    font-size: 12px;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.toolbar .field {
+    margin-bottom: 0;
+    min-width: 180px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    font-size: 12px;
+}
+
+.score-bar {
+    display: block;
+    height: 6px;
+    background-color: var(--line);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 4px;
+    width: 110px;
+}
+
+.score-bar span {
+    display: block;
+    height: 100%;
+    background-color: var(--ink);
+}
+
+.rate-drift {
+    font-size: 11px;
+    display: block;
+}
+
+.login-shell {
+    max-width: 380px;
+    margin: 96px auto;
+    padding: 0 20px;
+}
+
+.login-shell .panel {
+    margin-bottom: 0;
+}
+
+.demo-credentials {
+    background-color: var(--muted-surface);
+    border: 1px dashed var(--line-strong);
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 12px;
+    margin-top: 16px;
+}
+
+.empty {
+    padding: 18px 0;
+    font-size: 13px;
+}

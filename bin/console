@@ -1,0 +1,134 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Mindflex\Database\Migrator;
+use Mindflex\Database\Seeder;
+use Mindflex\Support\Config;
+use Mindflex\Support\Database;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+
+$config = Config::load(dirname(__DIR__));
+$command = $argv[1] ?? 'help';
+
+$migrationsPath = $config->projectRoot() . '/database/migrations';
+$seedsPath = $config->projectRoot() . '/database/seeds';
+$legacyDatabasePath = $config->projectRoot() . '/database/legacy/mindflex-legacy.db';
+
+$line = static function (string $message): void {
+    fwrite(STDOUT, $message . PHP_EOL);
+};
+
+$fail = static function (string $message): never {
+    fwrite(STDERR, $message . PHP_EOL);
+    exit(1);
+};
+
+try {
+    switch ($command) {
+        case 'migrate':
+            $migrator = new Migrator(Database::connection($config), $migrationsPath);
+            $executed = $migrator->migrate();
+
+            if ($executed === []) {
+                $line('Database sudah paling baru.');
+                break;
+            }
+
+            foreach ($executed as $migrationName) {
+                $line('Terpasang: ' . $migrationName);
+            }
+            break;
+
+        case 'seed':
+            $seeder = new Seeder(Database::connection($config), $seedsPath);
+            $line(sprintf('Memuat %d file seed.', $seeder->seed()));
+            break;
+
+        case 'fresh':
+            $databasePath = $config->databasePath();
+
+            foreach ([$databasePath, $databasePath . '-wal', $databasePath . '-shm'] as $filePath) {
+                if (is_file($filePath)) {
+                    unlink($filePath);
+                }
+            }
+
+            Database::reset();
+            $connection = Database::connection($config);
+
+            $executed = (new Migrator($connection, $migrationsPath))->migrate();
+            $line(sprintf('Menjalankan %d migration.', count($executed)));
+
+            $seeder = new Seeder($connection, $seedsPath);
+            $line(sprintf('Memuat %d file seed.', $seeder->seed()));
+            $line('Database siap di ' . $databasePath);
+            break;
+
+        case 'migrate:legacy':
+            if (! is_file($legacyDatabasePath)) {
+                $fail('File legacy tidak ditemukan di ' . $legacyDatabasePath);
+            }
+
+            $databasePath = $config->databasePath();
+
+            foreach ([$databasePath, $databasePath . '-wal', $databasePath . '-shm'] as $filePath) {
+                if (is_file($filePath)) {
+                    unlink($filePath);
+                }
+            }
+
+            if (! is_dir(dirname($databasePath))) {
+                mkdir(dirname($databasePath), 0o775, true);
+            }
+
+            copy($legacyDatabasePath, $databasePath);
+            Database::reset();
+
+            $executed = (new Migrator(Database::connection($config), $migrationsPath))->migrate();
+            $line(sprintf('Menaikkan salinan database legacy lewat %d migration.', count($executed)));
+            $line('Data asli tetap utuh. Tidak ada seed yang dimuat.');
+            break;
+
+        case 'status':
+            $connection = Database::connection($config);
+            $migrator = new Migrator($connection, $migrationsPath);
+
+            $line('Database: ' . $config->databasePath());
+            $line('Migration terpasang: ' . count($migrator->appliedMigrations()) . ' dari ' . count($migrator->migrationFiles()));
+
+            foreach (['tutors', 'students', 'assignments', 'subjects', 'tutor_reviews'] as $tableName) {
+                try {
+                    $total = $connection->query('SELECT COUNT(*) FROM ' . $tableName)->fetchColumn();
+                    $line(sprintf('  %-14s %s baris', $tableName, (string) $total));
+                } catch (Throwable) {
+                    $line(sprintf('  %-14s belum ada', $tableName));
+                }
+            }
+            break;
+
+        case 'hash:password':
+            $plainPassword = $argv[2] ?? '';
+
+            if ($plainPassword === '') {
+                $fail('Pakai: php bin/console hash:password "password-anda"');
+            }
+
+            $line(password_hash($plainPassword, PASSWORD_BCRYPT));
+            break;
+
+        default:
+            $line('Perintah yang tersedia:');
+            $line('  migrate         Jalankan migration yang belum dipakai');
+            $line('  seed            Muat data demo');
+            $line('  fresh           Hapus database lalu migrate dan seed ulang');
+            $line('  migrate:legacy  Salin database legacy ke storage lalu naikkan skemanya');
+            $line('  status          Tampilkan migration terpasang dan jumlah baris');
+            $line('  hash:password   Buat hash bcrypt untuk ADMIN_PASSWORD_HASH');
+            break;
+    }
+} catch (Throwable $exception) {
+    $fail('Gagal: ' . $exception->getMessage());
+}
