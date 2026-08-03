@@ -158,6 +158,11 @@ a {
 .table-scroll {
     overflow-x: auto;
     margin-bottom: 16px;
+    max-width: 100%;
+}
+
+.table-scroll table {
+    min-width: 600px;
 }
 
 table {
